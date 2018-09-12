@@ -2,7 +2,7 @@
 Test repository for CDSS Git training.
 # test-cdss-git-training-repo #
 
-This is a test repository used with the CDSS Git Training.
+This is a test repository used with the CDSS Git Training!
 
 ## Contents ##
 
