@@ -2,11 +2,17 @@
 Test repository for CDSS Git training.
 # test-cdss-git-training-repo #
 
-This is a test repository used with the CDSS Git Training!
+This is a test repository used with the CDSS Git Training!  
+Things to keep in mind for Markdown syntax:
 
+- Create a list by using a '-' followed by a space
+- Access Atom text editor with the 'atom' keyword followed by the filename
+- In Atom, access the Markdown preview with (Ctrl + shift + M)
+- Two spaces at the end of a line generates a new line
+ 
 ## Contents ##
 
-The repository contains a few folders and files created to demonstrate Git use.
+The repository contains a few folders and files created to demonstrate Git use and various training documentation exercises.
 
 ## Maintainer ##
 
