@@ -1,4 +1,4 @@
-#Main Content
+## Introduction
 
 - Mkdocs is compatible with markdown
 - By using themes, a clean documentation page is produced
@@ -7,15 +7,16 @@
 - To see a live preview of the mkdocs page, use the command `mkdocs serve`
 - To show Markdown as literal text, use 4 back ticks before and after the segment of text
 
-# First heading
+## Headings
 
 - To create a heading, use `# Heading Name`
+- To add it to a table of contents, use two '#'s: `## Heading Name`
 
-# Second heading
+## Second heading
 
 - No material here yet!
 
-# Third Heading
+## Bulleted Lists
 
 - This is the start of another bulleted list
 - To create a link to a heading, use
