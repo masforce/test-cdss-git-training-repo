@@ -16,3 +16,7 @@ Git allows multiple developers to work on the same code, and maintains a record 
 - When addressing an issue listed on GitHub, always create a branch to modify the project
 - Branches are named in the following format:  (Issue number)-(Issue type)-(priority)-(brief detail)
 - When merging a branch into the master, always use no fast forward: **git merge --no-ff**
+
+
+
+- Random change to training materials
