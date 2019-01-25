@@ -28,7 +28,7 @@
                 });
                 $(function(){
                 // jQuery command to get/read file from testing.csv
-                $.get('data-prep/2series-example.csv', function(csvData) {
+                $.get('data-prep/example-streamflow.csv', function(csvData) {
                 	var myChart = Highcharts.chart('container', {
                 		data: {
                   			csv: csvData    // data to be plotted
