@@ -27,6 +27,4 @@ If contributions were accepted, they would use the Issues or pull requests.
 
 [GPL 3.0](https://github.com/smalers/test-cdss-git-training-repo/blob/master/LICENSE)
 
-<div id="iframe container">
- <div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;"><iframe src="https://jsfiddle.net/masforce/troj4q5y/embedded/" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>
-</div>
+https://jsfiddle.net/masforce/troj4q5y/embedded/
