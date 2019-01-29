@@ -28,36 +28,5 @@ If contributions were accepted, they would use the Issues or pull requests.
 [GPL 3.0](https://github.com/smalers/test-cdss-git-training-repo/blob/master/LICENSE)
 
 <div id="iframe container">
- <script async src="//jsfiddle.net/masforce/troj4q5y/5/embed/result/"> </script>
- <script>
-  var configurationFile = "https://raw.githubusercontent.com/OpenWaterFoundation/owf-lib-viz-highcharts-js/master/Timeseries/TSTool-Line-Symbology/data-files/config1.json";
-var myData = "https://raw.githubusercontent.com/OpenWaterFoundation/owf-lib-viz-highcharts-js/master/Timeseries/TSTool-Line-Symbology/data-prep/2series-example.csv";
-$.ajax({
-  url: configurationFile,
-  async: false,
-  dataType: 'json',
-  error: function(error) {
-    console.log('issue')
-  },
-  success: function(data) {
-    console.log(data)
-    //read json configuration properties
-    $(function() {
-      Highcharts.setOptions(data.Properties);
-    });
-    $(function() {
-      // jQuery command to get/read file from 2series-example.csv
-      $.get(myData, function(csvData) {
-        var myChart = Highcharts.chart('container', {
-          data: {
-            csv: csvData // data to be plotted
-          }
-        });
-        //update properties that depend on data
-        myChart.update(data.Properties);
-      });
-    });
-  }
-})
- </script>
+ <div style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;"><iframe src="https://jsfiddle.net/masforce/troj4q5y/embedded/" style="border: 0; top: 0; left: 0; width: 100%; height: 100%; position: absolute;" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>
 </div>
