@@ -29,4 +29,35 @@ If contributions were accepted, they would use the Issues or pull requests.
 
 <div id="iframe container">
  <script async src="//jsfiddle.net/masforce/troj4q5y/5/embed/result/"> </script>
+ <script>
+  var configurationFile = "https://raw.githubusercontent.com/OpenWaterFoundation/owf-lib-viz-highcharts-js/master/Timeseries/TSTool-Line-Symbology/data-files/config1.json";
+var myData = "https://raw.githubusercontent.com/OpenWaterFoundation/owf-lib-viz-highcharts-js/master/Timeseries/TSTool-Line-Symbology/data-prep/2series-example.csv";
+$.ajax({
+  url: configurationFile,
+  async: false,
+  dataType: 'json',
+  error: function(error) {
+    console.log('issue')
+  },
+  success: function(data) {
+    console.log(data)
+    //read json configuration properties
+    $(function() {
+      Highcharts.setOptions(data.Properties);
+    });
+    $(function() {
+      // jQuery command to get/read file from 2series-example.csv
+      $.get(myData, function(csvData) {
+        var myChart = Highcharts.chart('container', {
+          data: {
+            csv: csvData // data to be plotted
+          }
+        });
+        //update properties that depend on data
+        myChart.update(data.Properties);
+      });
+    });
+  }
+})
+ </script>
 </div>
