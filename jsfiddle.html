@@ -1,0 +1,29 @@
+
+$.ajax({
+  url: configurationFile,
+  async: false,
+  dataType: 'json',
+  error: function(error) {
+    console.log('issue')
+  },
+  success: function(data) {
+    console.log(data)
+    //read json configuration properties
+    $(function() {
+      Highcharts.setOptions(data.Properties);
+    });
+    $(function() {
+      // jQuery command to get/read file from 2series-example.csv
+      $.get(myData, function(csvData) {
+        var myChart = Highcharts.chart('container', {
+          data: {
+            csv: csvData // data to be plotted
+          }
+        });
+        //update properties that depend on data
+        myChart.update(data.Properties);
+      });
+    });
+  }
+})
+
