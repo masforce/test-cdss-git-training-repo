@@ -27,4 +27,4 @@ If contributions were accepted, they would use the Issues or pull requests.
 
 [GPL 3.0](https://github.com/smalers/test-cdss-git-training-repo/blob/master/LICENSE)
 
-<script async src="//jsfiddle.net/masforce/troj4q5y/13/embed/"></script>
+<iframe width="100%" height="300" src="//jsfiddle.net/masforce/troj4q5y/13/embedded/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
