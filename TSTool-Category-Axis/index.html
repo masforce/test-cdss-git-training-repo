@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TS-Tool-Category-Axis</title>
+    <!-- Javascript -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="javascript/highstock-6.1.4.js"></script>
+    <script src="javascript/data.js"></script>
+    <script src="javascript/papaparse.min.js"></script>
+
+</head>
+
+<body>
+    <div id="container" style="width: 1200px;"></div>
+
+    <script>
+        var configFile = "data-files/config1.json";
+        var myConfig;
+        var dataFile = "data-prep/4710-wind-speed.csv";
+        var myChart1;
+        var myChart2;
+        var minVal = Number.MAXVALUE;
+        //Synchronize tooltips and crosshairs with event handlers
+        ['mousemove', 'touchmove', 'touchstart'].forEach(function (eventType) {
+            document.getElementById('container').addEventListener(
+                eventType,
+                function (e) {
+                    var chart, point, i, event;
+                    for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+                        chart = Highcharts.charts[i];
+                        // Find coordinates within the chart
+                        event = chart.pointer.normalize(e);
+                        // Get the hovered point
+                        point = chart.series[0].searchPoint(event, true);
+                        if (point) {
+                            point.highlight(e);
+                        }
+                    }
+                }
+            );
+        });
+        //Override reset function
+        Highcharts.Pointer.prototype.reset = function () {
+            return undefined;
+        };
+        //Highlight a point by showing tooltip, setting hover state and draw crosshair
+        Highcharts.Point.prototype.highlight = function (event) {
+            event = this.series.chart.pointer.normalize(event);
+            this.onMouseOver(); // Show the hover marker
+            this.series.chart.tooltip.refresh(this); // Show the tooltip
+            this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
+        };
+        //syncExtremes function synchronizes zoom feature between charts
+        function syncExtremes(e) {
+            var thisChart = this.chart;
+            if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
+                //console.log("event");
+                Highcharts.each(Highcharts.charts, function (chart) {
+                    if (chart !== thisChart) {
+                        if (chart.xAxis[0].setExtremes) { // It is null while updating
+                            chart.xAxis[0].setExtremes(e.min, e.max, undefined,false, { trigger: 'syncExtremes' });
+                            //Anytime zoom is altered, check the interval to determine if it is small enough to display symbols
+                            //If so, update the chart
+                            
+                            $.ajax({
+                                url: configFile,
+                                async: false,
+                                dataType: 'json',
+                                error: function(error){
+                                    console.log('issue')
+                                },
+                                success: function(data){
+                                    console.log("zoom event");
+                                    //Figure out minvalue when a double zoom is performed!!!  Number.MAXVALUE?  or 0?
+                                    if (e.max - e.min < 120000000){
+                                        if ((!(e.min > minVal)) && (e.min != null)){
+                                            console.log("replace minVal")
+                                            minVal = e.min;
+                                        }
+                                        
+                                        $.ajax({
+                                            url: dataFile,
+                                            async: false,
+                                            dataType: 'text',
+                                            error: function(error){
+                                                console.log('issue')
+                                            },
+                                            success: function(data){
+                                                myConfig = Papa.parse(data);
+                                                for (var i = 0; i < myConfig.data.length; i++){
+                                                    var myDate = new Date(myConfig.data[i][0])
+                                                    if (myDate.valueOf() > e.min && myDate.valueOf() < (e.min + 120000000)){
+                                                        var direction = myConfig.data[i][1]
+                                                        if (direction == 0 || direction == 360){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/up.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if ((direction > 0) && (direction < 90)){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/right-up.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if (direction == 90){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/right.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if ((direction > 90) && (direction < 180)){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/right-down.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if (direction == 180){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/down.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if ((direction > 180) && (direction < 270)){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/left-down.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if (direction == 270){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/left.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                        else if ((direction > 270) && (direction < 360)){
+                                                            myChart2.series[0].data[i-1].update({
+                                                                marker: {
+                                                                    symbol: "url(../data-prep/left-up.png)"
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        })
+                                        
+                                    }
+                                    //If e.min and e.max are null, it indicates that the reset zoom button has been triggered
+                                    else if (e.max == null && e.min == null){
+                                        console.log("else triggered")
+                                        for (var i = 0; i < myConfig.data.length; i++){
+                                            var myDate = new Date(myConfig.data[i][0])
+                                            console.log("minVal is: " + minVal)
+                                            if (myDate.valueOf() > minVal && myDate.valueOf() < (minVal + 120000000)){
+                                                console.log("conditional triggered")
+                                                myChart2.series[0].data[i-1].update({
+                                                    marker: {
+                                                        symbol: "circle"
+                                                    }
+                                                })
+                                            }  
+                                        }
+                                        console.log("reset minVal")
+                                        minVal = Number.MAXVALUE;
+                                    }
+                                }
+                            });                          
+                            
+                        }
+                    }
+                });
+            }
+        }
+        
+        $.ajax({
+            url: configFile,
+            async: false,
+            dataType: 'json',
+            error: function(error){
+                console.log('issue')
+            },
+            success: function(data){
+                console.log(data)
+                
+                $(function(){
+                    //read json configuration properties
+                    Highcharts.setOptions(data.Properties);
+                    
+                    var chartA = document.createElement('div');
+                    chartA.className = 'chart';
+                    document.getElementById('container').appendChild(chartA);
+                    var chartB = document.createElement('div');
+                    chartB.className = 'chart';
+                    document.getElementById('container').appendChild(chartB);
+                    // jQuery command to get/read file from csv
+                    $.get(dataFile, function(csvData) {
+                        myChart1 = Highcharts.chart(chartA, {
+                            data: {
+                                csv: csvData,    // data to be plotted
+                                startColumn: 0,
+                                endColumn: 1
+                            },
+                            //Use the setExtremes function to sync the zoom feature between the two charts
+                            xAxis: {
+                                events: {
+                                    setExtremes: syncExtremes
+                                }
+                            }
+                        });
+                        //get the maximum date from highcharts to determine how many plotbands need to be made for sunrise data
+                        //Note:  Currently assumes data is recorded within a single month
+                        var maxDate = new Date(myChart1.xAxis[0].getExtremes().max);
+                        //perform the request for sunrise/sunset data
+                        var day;
+                        for (day = 1; day <= maxDate.getDate(); day++){
+                            var sunrise = "https://api.sunrise-sunset.org/json?lat=40.036380&lng=-105.543600&date=2016-1-" + day + "&formatted=0";
+                            $.ajax({
+                                url: sunrise,
+                                async: false,
+                                dataType: 'json',
+                                error: function(error){
+                                    console.log('issue in json')
+                                    //Add plot bands for day/night cycles (default 7am-7pm)
+                                    myChart1.xAxis[0].addPlotBand({
+                                        from: Date.UTC(2016,0,day,7),
+                                        to: Date.UTC(2016,0,day,19),
+                                        color: '#FCFFC5'
+                                    });  
+                                },
+                                success: function(data){
+                                    if (data.status != "OK"){
+                                        console.log('data.status is not OK')
+                                        //Add plot bands for day/night cycles (default 7am-7pm)
+                                        myChart1.xAxis[0].addPlotBand({
+                                            from: Date.UTC(2016,0,day,7),
+                                            to: Date.UTC(2016,0,day,19),
+                                            color: '#FCFFC5'
+                                        });
+                                    }
+                                    else {
+                                        //If data is okay, add dynamic plot bands for day/night cycles
+                                        console.log('data.status is OK')
+                                        var mySunrise = data.results.sunrise.substring(
+                                            data.results.sunrise.indexOf("T") + 1, 
+                                            data.results.sunrise.indexOf("+")
+                                        );
+                                        var mySunset = data.results.sunset.substring(
+                                            data.results.sunset.indexOf("T") + 1, 
+                                            data.results.sunset.indexOf("+")
+                                        );
+                                        var startTimes = mySunrise.split(':')
+                                        var endTimes = mySunset.split(':')
+                                        myChart1.xAxis[0].addPlotBand({
+                                            from: Date.UTC(2016,0,day,startTimes[0],startTimes[1],startTimes[2]),
+                                            to: Date.UTC(2016,0,day,endTimes[0],endTimes[1],endTimes[2]),
+                                            color: '#FCFFC5'
+                                        }); 
+                                    }
+                                }
+                            })
+                        }
+                        //update properties that depend on data
+                        myChart1.update(data.Properties_1);
+                    });
+                    $.get(dataFile, function(csvData) {
+                        myChart2 = Highcharts.chart(chartB, {
+                            data: {
+                                csv: csvData,    // data to be plotted
+                                startColumn: 0,
+                                endColumn: 2,
+                                parsed: function (column) {
+                                    column.splice(1,1);
+                                }
+                            },
+                            //Use the setExtremes function to sync the zoom feature between the two charts
+                            xAxis: {
+                                events: {
+                                    setExtremes: syncExtremes
+                                }
+                            }
+                        });
+                        myChart2.update(data.Properties_2);
+                        //myChart2.update(data.Properties_symbol);
+                    });
+                });
+            }
+        })
+    </script>
+    
+</body>
+
+</html>
