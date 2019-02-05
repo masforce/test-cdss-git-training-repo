@@ -4,7 +4,7 @@
 
 <button onclick="window.location.href = 'http://github.openwaterfoundation.org/owf-lib-viz-highcharts-js/Timeseries/TSTool-Category-Axis/';">See a live version here</button>
 
-[![button]<>](https://mattermost.com)
+[![button]](https://mattermost.com)
 
 <button type="button">Click Me!</button>(https://mattermost.com)
 
