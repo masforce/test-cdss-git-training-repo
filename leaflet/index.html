@@ -1,21 +1,21 @@
 <html>
 <head>
-    <title>Leaflet Choropleth Map</title>
+    <title>Leaflet Map Example</title>
 
     <!-- Include css files and a favicon icon -->
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/style1.css"/>
-    <!-- <link rel="stylesheet" href="css/leaflet.zoomhome.css"/> -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <!-- <link rel="stylesheet" href="css/L.Control.MousePosition.css"/> -->
+    <link rel="stylesheet" href="css/leaflet.zoomhome.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/L.Control.MousePosition.css"/>
     
     <!-- Include javascript files -->
     <script src="javascript/leaflet.js"></script>
     <script src="javascript/papaparse.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
-    <!--<script src="javascript/leaflet.zoomhome.min.js"></script> -->
-    <!--<script src="javascript/L.Control.MousePosition.js"></script> -->
+    <script src="javascript/leaflet.zoomhome.min.js"></script>
+    <script src="javascript/L.Control.MousePosition.js"></script>
     <!--<script src="javascript/leaflet-color-markers.js"></script> -->
 
 </head>
@@ -25,21 +25,67 @@
 </header>
 
 <body>
-    <div id="mapid">
+    <div id="mapid"></div>
+
         <script>
+
             // turn asynchronous mode off
             $.ajaxSetup({
                 async: false
             });
 
-            /* Create a Leaflet Map. Center on Fort Collins and set zoom level to 7*/
-            var map = L.map('mapid', {
-                center: [38.99, -105.54],
-                zoom: 7,
-                zoomControl: false
+            // Basemap Layers
+            // To get the URL from studio.mapbox.com:
+            // After publishing, look under the 'Use' tag and select 'Third Party'
+            // Use the integration URL from the 'CARTO' option
+
+            var topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'firstMap',
+                minZoom: '11'
+            }),
+            simple = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs13btye0cgx1fqlkv8z7ek9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'firstMap',
+                minZoom: '11'
             });
 
+            // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
+            // Set the default layers that appear on initialization
+            var mymap = L.map('mapid', {layers: [topographic], zoomControl: false}).setView([40.576530, -105.080772], 12);
+
+
+            var baseMaps = {
+                "Topographical": topographic,
+                "Simple": simple
+            };
+
+            /* Add layers to the map */
+            L.control.layers(baseMaps).addTo(mymap);
+
+
+            var baseMaps = {
+                "<span style='color: grey'>Hi there</span>": topographic,
+                "Simple": simple
+            };
             
+            var zoomHome = L.Control.zoomHome();
+            zoomHome.addTo(mymap);
+
+            L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
+                var direction = (num < 0) ? 'W' : 'E';
+                var formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+                return formatted; 
+            },
+            latFormatter: function(num) {
+                var direction = (num < 0) ? 'S' : 'N';
+                var formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+                return formatted;
+            }}).addTo(mymap);
+
+             /* Bottom Right corner. This shows the scale in km and miles of
+            the map. */
+            L.control.scale({position: 'bottomleft',imperial: true}).addTo(mymap);
+
         </script>
-    </div>
 </body>
