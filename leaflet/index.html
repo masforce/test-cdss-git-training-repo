@@ -41,33 +41,60 @@
 
             var topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                id: 'firstMap',
-                minZoom: '11'
+                id: 'firstMap'
             }),
             simple = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs13btye0cgx1fqlkv8z7ek9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                id: 'firstMap',
-                minZoom: '11'
+                id: 'firstMap'
             });
 
             // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
             // Set the default layers that appear on initialization
-            var mymap = L.map('mapid', {layers: [topographic], zoomControl: false}).setView([40.576530, -105.080772], 12);
+            var mymap = L.map('mapid', {
+                center: [40.576530, -105.080772],
+                zoom: 12,
+                layers: [simple, topographic],
+                zoomControl: false
+            });
 
 
             var baseMaps = {
-                "Topographical": topographic,
-                "Simple": simple
+                "Simple": simple,
+                "Topographical": topographic
             };
 
             /* Add layers to the map */
             L.control.layers(baseMaps).addTo(mymap);
 
 
-            var baseMaps = {
-                "<span style='color: grey'>Hi there</span>": topographic,
-                "Simple": simple
-            };
+
+
+
+
+
+               /* Get Boundary data */
+           var Water_Provider = (function() {
+                    var result;
+                    $.getJSON("data-files/Colorado-Dairies.geojson",function(data) {
+                        result = data;
+                    }); return result;
+            })();
+
+            var provider = L.geoJson(Water_Provider, {
+                onEachFeature: onEachFeature
+            }).addTo(mymap);
+
+
+
+
+
+
+
+
+
+
+
+
             
             var zoomHome = L.Control.zoomHome();
             zoomHome.addTo(mymap);
@@ -86,6 +113,33 @@
              /* Bottom Right corner. This shows the scale in km and miles of
             the map. */
             L.control.scale({position: 'bottomleft',imperial: true}).addTo(mymap);
+
+
+           
+
+            //function whenClicked(e) {
+            //    var layer = e.target;
+            //    console.log(layer.feature.properties.DairyName)
+            //    layer.bindPopup(layer.feature.properties.DairyName).openPopup();
+            //}
+
+            function onEachFeature(feature, l) {
+                //l.bindPopup('<pre>'+JSON.stringify(f.properties,null,' ').replace(/[\{\}"]/g,'')+'</pre>');
+
+                var popupContent = '<table style="border-style: solid;">';
+                for (var p in feature.properties) {
+                    popupContent += '<tr><td style="border-style: solid;">' + p + '</td><td>'+ feature.properties[p] + '</td></tr>';
+                }
+                popupContent += '</table>';
+
+                var myPopup = L.popup({maxHeight: 200, maxWidth: 600}).setContent(popupContent);
+
+                l.bindPopup(myPopup);
+            }
+
+
+            //Next: try add table styles to the style sheet to make it look nicer
+
 
         </script>
 </body>
