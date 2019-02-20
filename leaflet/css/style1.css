@@ -57,3 +57,17 @@ header h1 {
     margin: 0 0 5px;
     color: black;
 }
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+}
+tr:1 {background-color: blue;}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
